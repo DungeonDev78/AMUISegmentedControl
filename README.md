@@ -2,6 +2,8 @@
 
 A custom UISegmentedControl in two different flavours made for iOS in Swift 5.0
 
+![Image description](https://github.com/DungeonDev78/AMUISegmentedControl/blob/master/img001.jpg)
+
 ## Installation
 
 Copy the two Swift classes included in the repo in your project.
@@ -10,6 +12,14 @@ Copy the two Swift classes included in the repo in your project.
 ## Usage
 
 Add in your Storyboard a UIView and set its class as UISegmentedControl.
+
+
+Connect your component in your UIViewController using a @IBAction:
+```
+@IBAction func segmentedControlValueChanged(_ sender: AMUISegmentedControl) {
+        print("*** SELECTED INDEX: \(sender.selectedIndex) ***")
+}
+```
 
 Configure your selectors appearance directly on the storyboard using the IBInspectable variables.
 
@@ -27,14 +37,6 @@ To change the font style and the size used:
 fontName = "Futura-Bold"
 fontSize = 14
 ```
-
-Connect your component in your UIViewController using a @IBAction:
-```
-@IBAction func segmentedControlValueChanged(_ sender: AMUISegmentedControl) {
-        print("*** SELECTED INDEX: \(sender.selectedIndex) ***")
-}
-```
-
 
 ## Author
 
