@@ -1,7 +1,7 @@
 //
 //  AMUISegmentedControl.swift
 //
-//  Created with 💪 by Alessandro Manilii on 12/11/2018.
+//  Created with 💪 by Alessandro Manilii
 //  Copyright © 2018 Alessandro Manilii. All rights reserved.
 //
 
@@ -12,11 +12,21 @@ public class AMUISegmentedControl: UIControl {
 
     // MARK: - IBInspectables
     @IBInspectable var isUnderlined: Bool = false {
-        didSet { configureStyle(isUnderlined: isUnderlined) }
+        didSet {
+            setupConstraintsForSelector()
+            configureStyle(isUnderlined: isUnderlined)
+
+        }
     }
 
     @IBInspectable var borderWidth: CGFloat = 0 {
-        didSet { layer.borderWidth = borderWidth }
+        didSet {
+            layer.borderWidth = borderWidth
+            configureStyle(isUnderlined: isUnderlined)
+            setupConstraintsForSelector()
+            setupSelector(for:  getButtonTitles())
+
+        }
     }
 
     @IBInspectable var borderColor: UIColor = UIColor.clear {
@@ -51,6 +61,8 @@ public class AMUISegmentedControl: UIControl {
     var buttons = [UIButton]()
     var selector: UIView!
     var topAncorConstraint: NSLayoutConstraint?
+    var heightConstraint: NSLayoutConstraint?
+    var centerConstraint: NSLayoutConstraint?
     var selectedIndex = 0
 
     // MARK: - Lifecycle & Public Setup
@@ -102,11 +114,13 @@ private extension AMUISegmentedControl {
         buttons.removeAll()
         subviews.forEach{ $0.removeFromSuperview() }
 
-        let buttonTitles = commaSeparatedButtonTitles.components(separatedBy: ",")
-
-        setupButtons(with: buttonTitles)
-        setupSelector(for: buttonTitles)
+        setupButtons(with: getButtonTitles())
+        setupSelector(for: getButtonTitles())
         setupButtonsStackView()
+    }
+
+    func getButtonTitles() -> [String] {
+        return commaSeparatedButtonTitles.components(separatedBy: ",")
     }
 
     /// Configure the buttons
@@ -134,7 +148,9 @@ private extension AMUISegmentedControl {
             selector = UIView(frame: CGRect(x: selectorStartPosition, y: 10, width: selectorWidth, height: 5))
         }
 
-        selector.layer.cornerRadius = frame.height/2
+        selector.layer.cornerRadius = getSelectorHeight()/2
+        if isUnderlined { selector.layer.cornerRadius = 0 }
+
         selector.backgroundColor = selectorColor
         addSubview(selector)
 
@@ -144,12 +160,28 @@ private extension AMUISegmentedControl {
     /// Configure the geometric constraints of the dynamic selector
     func setupConstraintsForSelector() {
         selector.translatesAutoresizingMaskIntoConstraints = false
-        topAncorConstraint = selector.topAnchor.constraint(equalTo: self.topAnchor)
-        if let topAncorConstraint = topAncorConstraint { topAncorConstraint.isActive = true }
-        selector.bottomAnchor.constraint(equalTo:  self.bottomAnchor).isActive = true
+
+        if isUnderlined {
+            topAncorConstraint = selector.topAnchor.constraint(equalTo: self.topAnchor)
+            if let topAncorConstraint = topAncorConstraint {
+                topAncorConstraint.constant = frame.height - 3
+                topAncorConstraint.isActive = true
+            }
+            selector.bottomAnchor.constraint(equalTo:  self.bottomAnchor).isActive = true
+        } else {
+            heightConstraint = selector.heightAnchor.constraint(equalToConstant: getSelectorHeight())
+            if let heightConstraint = heightConstraint { heightConstraint.isActive = true }
+            centerConstraint =  selector.centerYAnchor.constraint(equalTo: centerYAnchor)
+            if let centerConstraint = centerConstraint { centerConstraint.isActive = true }
+        }
+
         selector.leftAnchor.constraint(equalTo: self.leftAnchor).isActive =  true
         let multiplier = 1 / CGFloat(buttons.count)
         selector.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: multiplier).isActive = true
+    }
+
+    func getSelectorHeight() -> CGFloat {
+        return frame.height - 2 * borderWidth
     }
 
     /// Configure the buttons area
