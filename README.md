@@ -1,6 +1,6 @@
 # AMUISegmentedControl
 
-A custom UISegmentedControl in two different flavours made for iOS in Swift 5.0
+A custom UISegmentedControl in two different flavours made for iOS in Swift 5.1
 
 ![Image description](https://github.com/DungeonDev78/AMUISegmentedControl/blob/master/img001.jpg)
 
