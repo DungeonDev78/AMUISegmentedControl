@@ -142,6 +142,9 @@ private extension AMUISegmentedControl {
     ///
     /// - Parameter buttonTitles: the array of titles
     func setupSelector(for buttonTitles: [String]) {
+        if selector == nil {
+            setupSelector(for: getButtonTitles())
+        }
         let selectorWidth = frame.width / CGFloat(buttonTitles.count)
         let selectorStartPosition = frame.width/CGFloat(buttons.count) * CGFloat(selectedIndex)
         if selector == nil {
